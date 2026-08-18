@@ -1,0 +1,180 @@
+<div>
+  <!-- Page head -->
+  <div class="ax-page-head">
+    <div>
+      <nav class="ax-breadcrumb" aria-label="Trilha">
+        <ol class="ax-breadcrumb__list">
+          <li class="ax-breadcrumb__item"><span class="ax-breadcrumb__link">Início</span></li>
+          <li class="ax-breadcrumb__sep" aria-hidden="true">
+            <svg class="ax-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"></path></svg>
+          </li>
+          <li class="ax-breadcrumb__item"><a routerLink="/profile" class="ax-breadcrumb__link">Perfil</a></li>
+          <li class="ax-breadcrumb__sep" aria-hidden="true">
+            <svg class="ax-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"></path></svg>
+          </li>
+          <li class="ax-breadcrumb__item" aria-current="page">Editar Perfil</li>
+        </ol>
+      </nav>
+      <h1 class="ax-page-head__title">Editar Perfil</h1>
+      <p class="ax-page-head__subtitle">Atualize seus dados de conta e segurança.</p>
+    </div>
+    <div class="ax-page-head__actions">
+      <span *ngIf="saved" class="ax-badge ax-badge--success ax-badge--pill">
+        <span class="ax-badge__dot"></span>Salvo
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="ax-tabs" role="tablist" aria-label="Seções do perfil">
+    <button
+      type="button"
+      class="ax-tabs__tab"
+      [class.is-active]="tab === 'account'"
+      (click)="tab = 'account'"
+      role="tab"
+      [attr.aria-selected]="tab === 'account'"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+        <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path>
+      </svg>
+      Conta
+    </button>
+    <button
+      type="button"
+      class="ax-tabs__tab"
+      [class.is-active]="tab === 'security'"
+      (click)="tab = 'security'"
+      role="tab"
+      [attr.aria-selected]="tab === 'security'"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3l8 3v5c0 5-3.5 8.5-8 10c-4.5-1.5-8-5-8-10V6z"></path>
+        <path d="M9 12l2 2l4-4"></path>
+      </svg>
+      Segurança
+    </button>
+  </div>
+
+  <!-- Account panel -->
+  <div *ngIf="tab === 'account'" class="ax-card" role="tabpanel">
+    <div class="ax-card__header">
+      <h2 class="ax-card__title">Dados da Conta</h2>
+    </div>
+    <div class="ax-card__body">
+      <!-- Avatar -->
+      <div class="ax-avatar-field">
+        <div class="ax-avatar-field__preview">
+          <img class="ax-avatar ax-avatar--2xl ax-avatar--ringed" [src]="avatarPreview" alt="Foto de perfil" width="96" height="96" />
+        </div>
+        <div class="ax-avatar-field__actions">
+          <label class="ax-btn ax-btn--secondary">
+            <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 7a2 2 0 0 1 2 -2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2v-9"></path>
+              <path d="M12 17a3.5 3.5 0 1 0 0 -7a3.5 3.5 0 0 0 0 7"></path>
+            </svg>
+            Trocar foto
+            <input
+              type="file"
+              accept="image/*"
+              (change)="onAvatarSelected($event)"
+              class="ax-avatar-field__input"
+              aria-label="Selecionar foto de perfil"
+            />
+          </label>
+          <button
+            type="button"
+            class="ax-btn ax-btn--ghost"
+            *ngIf="avatarFile"
+            (click)="removeAvatar()"
+          >
+            Remover
+          </button>
+          <span class="ax-field__hint ax-avatar-field__hint">JPG, PNG ou GIF. Até 2 MB.</span>
+        </div>
+      </div>
+
+      <div class="ax-avatar-divider"></div>
+
+      <div class="ax-edit-grid">
+        <div class="ax-field">
+          <label class="ax-field__label" for="p-name">Nome completo</label>
+          <input id="p-name" type="text" class="ax-input" [(ngModel)]="form.name" placeholder="Seu nome" />
+        </div>
+
+        <div class="ax-field">
+          <label class="ax-field__label" for="p-email">Email</label>
+          <input id="p-email" type="email" class="ax-input" [(ngModel)]="form.email" placeholder="voce&#64;duka.tv" />
+        </div>
+
+        <div class="ax-field">
+          <label class="ax-field__label" for="p-role">Função</label>
+          <input id="p-role" type="text" class="ax-input" [(ngModel)]="form.role" placeholder="Ex.: Administrador" />
+        </div>
+
+        <div class="ax-field">
+          <label class="ax-field__label" for="p-location">Localização</label>
+          <input id="p-location" type="text" class="ax-input" [(ngModel)]="form.location" placeholder="Cidade, UF" />
+        </div>
+
+        <div class="ax-field ax-edit-grid__full">
+          <label class="ax-field__label" for="p-bio">Sobre</label>
+          <textarea id="p-bio" class="ax-input ax-textarea" rows="3" [(ngModel)]="form.bio" placeholder="Breve descrição…"></textarea>
+          <span class="ax-field__hint">Resumo curto exibido no perfil.</span>
+        </div>
+      </div>
+
+      <div class="ax-stickybar">
+        <a routerLink="/profile" class="ax-btn ax-btn--secondary">Cancelar</a>
+        <button type="button" class="ax-btn ax-btn--primary" [disabled]="!canSave" (click)="saveAccount()">
+          <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12l5 5l10 -10"></path>
+          </svg>
+          Salvar alterações
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security panel -->
+  <div *ngIf="tab === 'security'" class="ax-card" role="tabpanel">
+    <div class="ax-card__header">
+      <h2 class="ax-card__title">Alterar Senha</h2>
+    </div>
+    <div class="ax-card__body">
+      <div class="ax-edit-grid">
+        <div class="ax-field">
+          <label class="ax-field__label" for="p-pass-current">Senha atual</label>
+          <input id="p-pass-current" type="password" class="ax-input" [(ngModel)]="pass.current" placeholder="••••••••" />
+        </div>
+
+        <div class="ax-field">
+          <label class="ax-field__label" for="p-pass-next">Nova senha</label>
+          <input id="p-pass-next" type="password" class="ax-input" [(ngModel)]="pass.next" placeholder="Mínimo de 6 caracteres" />
+          <span class="ax-field__hint">Use pelo menos 6 caracteres.</span>
+        </div>
+
+        <div class="ax-field">
+          <label class="ax-field__label" for="p-pass-confirm">Confirmar nova senha</label>
+          <input id="p-pass-confirm" type="password" class="ax-input" [(ngModel)]="pass.confirm" placeholder="Repita a nova senha" />
+        </div>
+      </div>
+
+      <div class="ax-stickybar">
+        <a routerLink="/profile" class="ax-btn ax-btn--secondary">Cancelar</a>
+        <button
+          type="button"
+          class="ax-btn ax-btn--primary"
+          [disabled]="!pass.current || pass.next.length < 6 || pass.next !== pass.confirm"
+          (click)="saveSecurity()"
+        >
+          <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12l5 5l10 -10"></path>
+          </svg>
+          Atualizar senha
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,98 @@
+<!-- Fullscreen Player -->
+<div #playerContainer class="player-fullscreen" (mousemove)="onMouseMove()" (touchstart)="onMouseMove()">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-white text-center">
+    <div class="animate-pulse">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-16 h-16 mx-auto mb-4 animate-spin">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+      <p class="text-lg">Carregando playlist...</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && error" class="text-white text-center px-8">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-16 h-16 mx-auto mb-4 text-yellow-400">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+    </svg>
+    <p class="text-xl font-bold mb-2">Atenção</p>
+    <p class="text-gray-300">{{ error }}</p>
+  </div>
+
+  <!-- Media Display -->
+  <div
+    *ngIf="!loading && currentMedia"
+    class="w-full h-full flex items-center justify-center transition-opacity duration-500"
+    [class]="fadeClass"
+  >
+    <!-- Video (always in DOM, hidden when not video) -->
+    <video
+      #videoEl
+      [src]="videoSrc"
+      [class]="objectClass"
+      [hidden]="!isVideo()"
+      muted
+      playsinline
+      preload="auto"
+      (ended)="nextMedia()"
+    ></video>
+
+    <!-- GIF (original quality via img tag) -->
+    <img
+      *ngIf="isGif()"
+      [src]="getMediaUrl(currentMedia.url)"
+      [class]="objectClass"
+      [alt]="currentMedia.original_name"
+      draggable="false"
+    />
+
+    <!-- Static Image -->
+    <img
+      *ngIf="!isVideo() && !isGif()"
+      [src]="getMediaUrl(currentMedia.url)"
+      [class]="objectClass"
+      [alt]="currentMedia.original_name"
+      draggable="false"
+    />
+  </div>
+
+  <!-- Controls overlay (bottom-right corner) -->
+  <div
+    class="absolute bottom-4 right-4 flex items-center gap-2 transition-opacity duration-500 z-50"
+    [class.opacity-0]="!showControls"
+    [class.opacity-100]="showControls"
+  >
+    <!-- Fill screen toggle -->
+    <button
+      (click)="toggleFillScreen()"
+      class="w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer backdrop-blur-sm transition-all"
+      [title]="fillScreen ? 'Ajustar à tela' : 'Preencher tela'"
+    >
+      <!-- expand icon -->
+      <svg *ngIf="!fillScreen" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+      </svg>
+      <!-- shrink icon -->
+      <svg *ngIf="fillScreen" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 4v4a1 1 0 01-1 1H4m11-5v4a1 1 0 001 1h4M4 15h4a1 1 0 011 1v4m5-5h4a1 1 0 001-1v-4"></path>
+      </svg>
+    </button>
+
+    <!-- Browser fullscreen toggle -->
+    <button
+      (click)="toggleBrowserFullscreen()"
+      class="w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer backdrop-blur-sm transition-all"
+      [title]="isFullscreen ? 'Sair da tela cheia' : 'Tela cheia'"
+    >
+      <!-- enter fullscreen -->
+      <svg *ngIf="!isFullscreen" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+      </svg>
+      <!-- exit fullscreen -->
+      <svg *ngIf="isFullscreen" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+</div>

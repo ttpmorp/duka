@@ -1,0 +1,227 @@
+<div>
+  <!-- Page head -->
+  <div class="ax-page-head">
+    <div>
+      <nav class="ax-breadcrumb" aria-label="Trilha">
+        <ol class="ax-breadcrumb__list">
+          <li class="ax-breadcrumb__item"><span class="ax-breadcrumb__link">Início</span></li>
+          <li class="ax-breadcrumb__sep" aria-hidden="true">
+            <svg class="ax-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"></path></svg>
+          </li>
+          <li class="ax-breadcrumb__item" aria-current="page">Playlists</li>
+        </ol>
+      </nav>
+      <h1 class="ax-page-head__title">Gerenciamento de Playlists</h1>
+      <p class="ax-page-head__subtitle">Organize suas mídias em sequências de exibição para as TVs.</p>
+    </div>
+    <div class="ax-page-head__actions">
+      <span *ngIf="playlists.length > 0" class="ax-badge ax-badge--soft ax-badge--pill">
+        <span class="ax-badge__dot"></span>{{ playlists.length }} playlist(s)
+      </span>
+    </div>
+  </div>
+
+  <!-- Create playlist card -->
+  <div class="ax-card mb-6">
+    <div class="ax-card__header">
+      <h2 class="ax-card__title">Criar Nova Playlist</h2>
+    </div>
+    <div class="ax-card__body">
+      <form (ngSubmit)="createPlaylist()">
+        <div class="ax-create-grid">
+          <div class="ax-field">
+            <label class="ax-field__label" for="playlist-name">Nome*</label>
+            <input
+              type="text"
+              id="playlist-name"
+              [(ngModel)]="newPlaylistName"
+              name="name"
+              placeholder="Ex: TV Recepção"
+              class="ax-input"
+            />
+          </div>
+          <div class="ax-field">
+            <label class="ax-field__label" for="playlist-desc">Descrição</label>
+            <input
+              type="text"
+              id="playlist-desc"
+              [(ngModel)]="newPlaylistDescription"
+              name="description"
+              placeholder="Ex: Conteúdo para a TV da recepção"
+              class="ax-input"
+            />
+          </div>
+        </div>
+        <div class="flex justify-end mt-4">
+          <button
+            type="submit"
+            [disabled]="!newPlaylistName.trim() || creating"
+            class="ax-btn ax-btn--primary"
+          >
+            <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 5l0 14"></path>
+              <path d="M5 12l14 0"></path>
+            </svg>
+            {{ creating ? 'Criando…' : 'Criar Playlist' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Media selection panel -->
+  <div class="ax-card mb-6">
+    <div class="ax-card__header">
+      <div>
+        <h2 class="ax-card__title">Selecionar Mídia para Adicionar</h2>
+        <p class="ax-card__subtitle">Clique em uma mídia para selecioná-la e depois adicione na playlist desejada.</p>
+      </div>
+      <span *ngIf="selectedMediaId" class="ax-badge ax-badge--success ax-badge--pill">
+        <span class="ax-badge__dot"></span>{{ getSelectedMediaName() }}
+      </span>
+    </div>
+    <div class="ax-card__body">
+      <div *ngIf="selectedMediaId" class="ax-notice mb-4">
+        <span class="ax-notice__text">Mídia selecionada: {{ getSelectedMediaName() }}</span>
+        <button (click)="selectedMediaId = null" class="ax-btn ax-btn--ghost ax-btn--sm">Cancelar</button>
+      </div>
+
+      <div class="ax-thumbs">
+        <div
+          *ngFor="let item of mediaList"
+          class="ax-thumb"
+          [class.is-selected]="selectedMediaId === item.id"
+          (click)="toggleSelectMedia(item)"
+        >
+          <img
+            *ngIf="!isVideo(item)"
+            [src]="getMediaUrl(item.url)"
+            [alt]="item.original_name"
+            loading="lazy"
+          />
+          <video
+            *ngIf="isVideo(item)"
+            [src]="getMediaUrl(item.url)"
+            muted
+            preload="metadata"
+          ></video>
+          <div class="ax-thumb__overlay">
+            <span class="ax-thumb__name">{{ item.original_name }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="mediaList.length === 0" class="ax-empty" style="padding:1.5rem;">
+        <p class="ax-empty__text">Nenhuma mídia disponível. Faça upload na aba Mídias.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="ax-loading">Carregando playlists…</div>
+
+  <!-- Playlists list -->
+  <div *ngIf="!loading" class="ax-list">
+    <div *ngFor="let playlist of playlists" class="ax-list__item">
+      <div class="ax-list__head" (click)="toggleExpand(playlist)">
+        <div>
+          <h4 class="ax-list__title">{{ playlist.name }}</h4>
+          <p class="ax-list__desc" *ngIf="playlist.description">{{ playlist.description }}</p>
+          <p class="ax-list__count">{{ playlist.media_count }} mídia(s)</p>
+        </div>
+        <div class="ax-list__actions">
+          <button
+            (click)="$event.stopPropagation(); copyPlayerUrl(playlist)"
+            class="ax-btn ax-btn--secondary ax-btn--sm"
+            aria-label="Copiar URL do player"
+          >
+            <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+            </svg>
+            {{ copiedId === playlist.id ? 'Copiado!' : 'Copiar' }}
+          </button>
+
+          <button
+            (click)="$event.stopPropagation(); addSelectedMediaToPlaylist(playlist.id)"
+            class="ax-btn ax-btn--primary ax-btn--sm"
+          >
+            <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Adicionar mídia
+          </button>
+
+          <button
+            (click)="$event.stopPropagation(); deletePlaylist(playlist.id)"
+            class="ax-btn ax-btn--ghost ax-btn--icon ax-btn--sm"
+            aria-label="Excluir playlist"
+          >
+            <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+
+          <svg
+            class="ax-list__caret"
+            [class.is-open]="expandedPlaylistId === playlist.id"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+          >
+            <path d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Expanded detail -->
+      <div *ngIf="expandedPlaylistId === playlist.id" class="ax-list__body">
+        <div *ngIf="playlistDetails[playlist.id]" class="ax-thumbs">
+          <div
+            *ngFor="let item of playlistDetails[playlist.id].media_items"
+            class="ax-thumb is-removeable"
+          >
+            <img
+              *ngIf="!isVideo(item)"
+              [src]="getMediaUrl(item.url)"
+              [alt]="item.original_name"
+              loading="lazy"
+            />
+            <video
+              *ngIf="isVideo(item)"
+              [src]="getMediaUrl(item.url)"
+              muted
+              preload="metadata"
+            ></video>
+            <div class="ax-thumb__overlay">
+              <span class="ax-thumb__name">{{ item.original_name }} · {{ item.duration_seconds }}s</span>
+            </div>
+            <button
+              (click)="removeMediaFromPlaylist(playlist.id, item.id)"
+              class="ax-media-card__delete"
+              style="position:absolute;top:0.4rem;right:0.4rem;opacity:1;transform:none;"
+              aria-label="Remover da playlist"
+            >
+              <svg class="ax-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12"></path><path d="M6 6l12 12"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <div
+          *ngIf="!playlistDetails[playlist.id] || playlistDetails[playlist.id].media_items.length === 0"
+          class="ax-empty" style="padding:1.5rem;"
+        >
+          <p class="ax-empty__text">Esta playlist está vazia. Adicione mídias com o botão acima.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && playlists.length === 0" class="ax-card">
+    <div class="ax-empty">
+      <svg class="ax-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      <p class="ax-empty__title">Nenhuma playlist criada</p>
+      <p class="ax-empty__text">Crie uma playlist acima para organizar suas mídias.</p>
+    </div>
+  </div>
+</div>

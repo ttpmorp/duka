@@ -1,0 +1,148 @@
+<div class="ax-layout">
+  <!-- ═══════════ FLOATING MENU ═══════════ -->
+  <nav class="ax-floatmenu" role="navigation" aria-label="Menu principal">
+    <a routerLink="/" class="ax-floatmenu__item ax-floatmenu__brand" aria-label="Duka home" title="Duka">
+      <span class="ax-floatmenu__mark" aria-hidden="true">
+        <svg class="ax-icon" viewBox="0 0 32 32" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="dukamk" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#c084fc"></stop>
+              <stop offset="0.55" stop-color="#a855f7"></stop>
+              <stop offset="1" stop-color="#7c3aed"></stop>
+            </linearGradient>
+          </defs>
+          <path d="M4 4h8a12 12 0 0 1 12 12v12a0 0 0 0 1 0 0h-8a12 12 0 0 1-12-12V4z" fill="url(#dukamk)" stroke="none"></path>
+          <path d="M14 11.5a1 1 0 0 1 1.5-.87l6.5 4.5a1 1 0 0 1 0 1.74l-6.5 4.5a1 1 0 0 1-1.5-.87V11.5z" fill="#0A0C11" fill-opacity="0.92" stroke="none"></path>
+        </svg>
+      </span>
+    </a>
+
+    <span class="ax-floatmenu__divider" aria-hidden="true"></span>
+
+    <ng-container *ngFor="let item of menuItems">
+      <a
+        class="ax-floatmenu__item"
+        [routerLink]="item.link"
+        routerLinkActive="is-active"
+        [attr.aria-label]="item.label"
+        [title]="item.label"
+      >
+        <svg *ngIf="item.key === 'media'" class="ax-icon ax-floatmenu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 4h16v16h-16z"></path>
+          <path d="M4 9h16"></path>
+          <path d="M10 14l2 2l4 -4"></path>
+        </svg>
+        <svg *ngIf="item.key === 'playlists'" class="ax-icon ax-floatmenu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 6h12"></path>
+          <path d="M9 12h12"></path>
+          <path d="M9 18h12"></path>
+          <path d="M4 6l2 2l-2 2"></path>
+        </svg>
+        <svg *ngIf="item.key === 'profile'" class="ax-icon ax-floatmenu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+          <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path>
+        </svg>
+      </a>
+    </ng-container>
+
+    <span class="ax-floatmenu__divider" aria-hidden="true"></span>
+
+    <button type="button" class="ax-floatmenu__item" aria-label="Sair" title="Sair" (click)="logout()">
+      <svg class="ax-icon ax-floatmenu__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+        <path d="M9 12h12l-3 -3"></path>
+        <path d="M18 15l3 -3"></path>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- ═══════════ SHELL ═══════════ -->
+  <div class="ax-shell">
+    <!-- Header -->
+    <header class="ax-header" role="banner">
+      <a routerLink="/" class="ax-header__logo" aria-label="Duka home">
+        <svg viewBox="0 0 32 32" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg" class="ax-icon" aria-hidden="true">
+          <defs>
+            <linearGradient id="dukamk" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#c084fc"></stop>
+              <stop offset="0.55" stop-color="#a855f7"></stop>
+              <stop offset="1" stop-color="#7c3aed"></stop>
+            </linearGradient>
+          </defs>
+          <path d="M4 4h8a12 12 0 0 1 12 12v12a0 0 0 0 1 0 0h-8a12 12 0 0 1-12-12V4z" fill="url(#dukamk)" stroke="none"></path>
+          <path d="M14 11.5a1 1 0 0 1 1.5-.87l6.5 4.5a1 1 0 0 1 0 1.74l-6.5 4.5a1 1 0 0 1-1.5-.87V11.5z" fill="#0A0C11" fill-opacity="0.92" stroke="none"></path>
+        </svg>
+        <span class="ax-header__wordmark">DUKA</span>
+      </a>
+
+      <span class="ax-header__spacer"></span>
+
+      <!-- Profile dropdown -->
+      <div class="ax-profile" #profileRef>
+        <button
+          type="button"
+          class="ax-profile__trigger"
+          (click)="toggleProfile()"
+          aria-haspopup="menu"
+          [attr.aria-expanded]="profileOpen"
+          aria-label="Menu da conta"
+        >
+          <img class="ax-avatar ax-profile__avatar" [src]="profile.avatar" [alt]="profile.name" width="32" height="32">
+        </button>
+        <div class="ax-dropdown ax-profile__menu" role="menu" *ngIf="profileOpen">
+          <div class="ax-profile__card">
+            <img class="ax-avatar" [src]="profile.avatar" [alt]="profile.name" width="40" height="40">
+            <span class="ax-profile__card-meta">
+              <b>{{ profile.name }}</b>
+              <small>{{ profile.email }}</small>
+            </span>
+          </div>
+          <a class="ax-dropdown__item" role="menuitem" routerLink="/profile" (click)="closeProfile()">
+            <svg class="ax-icon ax-dropdown__lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+              <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+            </svg>
+            Ver Perfil
+          </a>
+          <a class="ax-dropdown__item" role="menuitem" routerLink="/profile/edit" (click)="closeProfile()">
+            <svg class="ax-icon ax-dropdown__lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065"></path>
+              <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
+            </svg>
+            Configurações da Conta
+          </a>
+          <div class="ax-dropdown__divider" role="separator"></div>
+          <button type="button" class="ax-dropdown__item ax-dropdown__item--danger" role="menuitem" (click)="logout()">
+            <svg class="ax-icon ax-dropdown__lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+              <path d="M9 12h12l-3 -3"></path>
+              <path d="M18 15l3 -3"></path>
+            </svg>
+            Sair
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="ax-main" id="ax-main">
+      <div class="ax-main__body ax-main__body--wide page-compact page-full-width">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="ax-footer">
+      <div class="ax-footer__left">
+        <span class="ax-footer__copy">© 2026 Duka</span>
+        <span class="ax-footer__sep" aria-hidden="true">·</span>
+        <span class="ax-footer__version ax-mono">v1.0.0</span>
+      </div>
+      <nav class="ax-footer__links" aria-label="Rodapé">
+        <a class="ax-footer__link" routerLink="/media">Mídias</a>
+        <a class="ax-footer__link" routerLink="/playlists">Playlists</a>
+        <a class="ax-footer__link" routerLink="/profile">Perfil</a>
+      </nav>
+    </footer>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<div>
+  <!-- Page head -->
+  <div class="ax-page-head">
+    <div>
+      <nav class="ax-breadcrumb" aria-label="Trilha">
+        <ol class="ax-breadcrumb__list">
+          <li class="ax-breadcrumb__item"><span class="ax-breadcrumb__link">Início</span></li>
+          <li class="ax-breadcrumb__sep" aria-hidden="true">
+            <svg class="ax-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"></path></svg>
+          </li>
+          <li class="ax-breadcrumb__item" aria-current="page">Perfil</li>
+        </ol>
+      </nav>
+      <h1 class="ax-page-head__title">Perfil</h1>
+      <p class="ax-page-head__subtitle">Dados do operador responsável pela operação.</p>
+    </div>
+    <div class="ax-page-head__actions">
+      <a routerLink="/profile/edit" class="ax-btn ax-btn--primary">
+        <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 5l0 14"></path>
+          <path d="M5 12l14 0"></path>
+        </svg>
+        Editar Perfil
+      </a>
+    </div>
+  </div>
+
+  <!-- Identity card -->
+  <div class="ax-card ax-card--cover">
+    <div class="ax-card__cover"></div>
+    <div class="ax-profile-card">
+      <img
+        class="ax-avatar ax-avatar--2xl ax-avatar--ringed"
+        [src]="data.avatar"
+        alt=""
+        width="96"
+        height="96"
+      />
+      <div class="ax-profile-card__main">
+        <h2 class="ax-profile-card__name">{{ data.name }}</h2>
+        <p class="ax-profile-card__role">{{ data.role }}</p>
+        <div class="ax-profile-card__meta">
+          <span class="ax-profile-card__tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path>
+              <path d="M4 7l8 6l8-6"></path>
+            </svg>
+            {{ data.email }}
+          </span>
+          <span class="ax-profile-card__tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            {{ data.location }}
+          </span>
+        </div>
+      </div>
+      <span class="ax-badge ax-badge--success ax-badge--pill ax-profile-card__status">
+        <span class="ax-badge__dot"></span>Ativo
+      </span>
+    </div>
+  </div>
+
+  <div class="ax-create-grid ax-profile-grid">
+    <!-- About -->
+    <div class="ax-card">
+      <div class="ax-card__header">
+        <h2 class="ax-card__title">Sobre</h2>
+      </div>
+      <div class="ax-card__body">
+        <p class="ax-profile-about">{{ data.bio }}</p>
+
+        <dl class="ax-profile-list">
+          <div class="ax-profile-list__row">
+            <dt>Função</dt>
+            <dd>{{ data.role }}</dd>
+          </div>
+          <div class="ax-profile-list__row">
+            <dt>Email</dt>
+            <dd>{{ data.email }}</dd>
+          </div>
+          <div class="ax-profile-list__row">
+            <dt>Localização</dt>
+            <dd>{{ data.location }}</dd>
+          </div>
+          <div class="ax-profile-list__row">
+            <dt>Operação</dt>
+            <dd>TVs Corporativas</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="ax-card">
+      <div class="ax-card__header">
+        <h2 class="ax-card__title">Competências</h2>
+      </div>
+      <div class="ax-card__body">
+        <div class="ax-profile-tags">
+          <span *ngFor="let skill of data.skills" class="ax-badge ax-badge--soft ax-badge--pill">{{ skill }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

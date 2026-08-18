@@ -1,0 +1,176 @@
+<div>
+  <!-- Page head -->
+  <div class="ax-page-head">
+    <div>
+      <nav class="ax-breadcrumb" aria-label="Trilha">
+        <ol class="ax-breadcrumb__list">
+          <li class="ax-breadcrumb__item"><span class="ax-breadcrumb__link">Início</span></li>
+          <li class="ax-breadcrumb__sep" aria-hidden="true">
+            <svg class="ax-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"></path></svg>
+          </li>
+          <li class="ax-breadcrumb__item" aria-current="page">Mídias</li>
+        </ol>
+      </nav>
+      <h1 class="ax-page-head__title">Galeria de Mídias</h1>
+      <p class="ax-page-head__subtitle">Gerencie as imagens, vídeos e GIFs exibidos nas suas TVs.</p>
+    </div>
+    <div class="ax-page-head__actions">
+      <span *ngIf="mediaList.length > 0" class="ax-badge ax-badge--soft ax-badge--pill">
+        <span class="ax-badge__dot"></span>{{ mediaList.length }} mídia(s)
+      </span>
+    </div>
+  </div>
+
+  <!-- Upload card -->
+  <div class="ax-card mb-6">
+    <div class="ax-card__header">
+      <h2 class="ax-card__title">Adicionar Nova Mídia</h2>
+    </div>
+    <div class="ax-card__body">
+      <form (ngSubmit)="uploadMedia()">
+        <div class="ax-upload-grid">
+          <div class="ax-field">
+            <label class="ax-field__label" for="duration">Duração (segundos)*</label>
+            <input
+              type="number"
+              id="duration"
+              [(ngModel)]="duration"
+              name="durationInSeconds"
+              min="1"
+              max="3600"
+              class="ax-input"
+            />
+          </div>
+
+          <div class="ax-field">
+            <label class="ax-field__label" for="file-upload">Arquivo*</label>
+            <input
+              type="file"
+              id="file-upload"
+              accept="image/*,video/*,.gif"
+              (change)="onFileSelected($event)"
+              class="ax-input ax-input--file"
+            />
+            <span *ngIf="selectedFile" class="ax-field__hint">{{ selectedFile.name }} ({{ formatSize(selectedFile.size) }})</span>
+          </div>
+
+          <!-- Preview -->
+          <div class="ax-upload-preview">
+            <ng-container *ngIf="previewUrl; else noPreview">
+              <video
+                *ngIf="selectedFile?.type?.startsWith('video/')"
+                [src]="previewUrl"
+                controls
+                muted
+              ></video>
+              <img
+                *ngIf="!selectedFile?.type?.startsWith('video/')"
+                [src]="previewUrl"
+                alt="Preview"
+              />
+            </ng-container>
+            <ng-template #noPreview>
+              <svg class="ax-empty__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8"></path>
+              </svg>
+              <p>Preview da mídia</p>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Upload progress -->
+        <div *ngIf="uploading" class="mt-4">
+          <div class="ax-progress">
+            <div class="ax-progress__fill" [style.width.%]="uploadProgress"></div>
+          </div>
+          <p class="ax-progress__label">{{ uploadProgress }}%</p>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex justify-end mt-4">
+          <button
+            type="submit"
+            [disabled]="!selectedFile || uploading"
+            class="ax-btn ax-btn--primary"
+          >
+            <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 5l0 14"></path>
+              <path d="M5 12l14 0"></path>
+            </svg>
+            {{ uploading ? 'Enviando…' : 'Enviar Mídia' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Selected indicator -->
+  <div *ngIf="selectedMediaId" class="ax-notice mb-6">
+    <span class="ax-notice__text">Mídia selecionada — vá até uma playlist e clique em "Adicionar mídia selecionada".</span>
+    <button (click)="selectedMediaId = null" class="ax-btn ax-btn--ghost ax-btn--sm" aria-label="Cancelar seleção">Cancelar</button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="ax-loading">Carregando mídias…</div>
+
+  <!-- Gallery grid -->
+  <div *ngIf="!loading" class="ax-grid">
+    <div
+      *ngFor="let item of mediaList"
+      class="ax-media-card"
+      [class.is-selected]="selectedMediaId === item.id"
+      (click)="toggleSelect(item)"
+    >
+      <div class="ax-media-card__thumb">
+        <video
+          *ngIf="isVideo(item)"
+          [src]="getMediaUrl(item.url)"
+          muted
+          preload="metadata"
+          (mouseenter)="$any($event.target).play()"
+          (mouseleave)="$any($event.target).pause()"
+        ></video>
+        <img
+          *ngIf="!isVideo(item)"
+          [src]="getMediaUrl(item.url)"
+          [alt]="item.original_name"
+          loading="lazy"
+        />
+        <div class="ax-media-card__overlay"></div>
+
+        <span class="ax-media-card__select-mark" aria-hidden="true">
+          <svg *ngIf="selectedMediaId === item.id" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"></path></svg>
+          <span *ngIf="selectedMediaId !== item.id" style="color:#111827;">+</span>
+        </span>
+
+        <button
+          (click)="$event.stopPropagation(); deleteMedia(item.id)"
+          class="ax-media-card__delete"
+          aria-label="Excluir mídia"
+        >
+          <svg class="ax-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+        </button>
+      </div>
+
+      <div class="ax-media-card__meta">
+        <p class="ax-media-card__name" [title]="item.original_name">{{ item.original_name }}</p>
+        <div class="ax-media-card__sub">
+          <span>{{ item.duration_seconds }}s</span>
+          <span class="ax-badge ax-badge--warning ax-badge--pill" *ngIf="isGif(item)">GIF</span>
+          <span class="ax-badge ax-badge--danger ax-badge--pill" *ngIf="isVideo(item)">VÍDEO</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && mediaList.length === 0" class="ax-card">
+    <div class="ax-empty">
+      <svg class="ax-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <p class="ax-empty__title">Nenhuma mídia cadastrada</p>
+      <p class="ax-empty__text">Faça upload de imagens, vídeos ou GIFs acima.</p>
+    </div>
+  </div>
+</div>

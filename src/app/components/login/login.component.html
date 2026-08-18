@@ -1,0 +1,70 @@
+<div class="ax-login">
+  <div class="ax-login__panel">
+    <div class="ax-login__brand">
+      <svg viewBox="0 0 32 32" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg" class="ax-icon" aria-hidden="true">
+        <defs>
+          <linearGradient id="dukamk" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#c084fc"></stop>
+            <stop offset="0.55" stop-color="#a855f7"></stop>
+            <stop offset="1" stop-color="#7c3aed"></stop>
+          </linearGradient>
+        </defs>
+        <path d="M4 4h8a12 12 0 0 1 12 12v12a0 0 0 0 1 0 0h-8a12 12 0 0 1-12-12V4z" fill="url(#dukamk)" stroke="none"></path>
+        <path d="M14 11.5a1 1 0 0 1 1.5-.87l6.5 4.5a1 1 0 0 1 0 1.74l-6.5 4.5a1 1 0 0 1-1.5-.87V11.5z" fill="#0A0C11" fill-opacity="0.92" stroke="none"></path>
+      </svg>
+      <span class="ax-login__wordmark">DUKA</span>
+    </div>
+
+    <h1 class="ax-login__title">Bem-vindo de volta</h1>
+    <p class="ax-login__subtitle">Entre para gerenciar suas TVs corporativas.</p>
+
+    <form (ngSubmit)="login()" class="ax-login__form">
+      <div class="ax-field">
+        <label class="ax-field__label" for="l-name">Nome</label>
+        <input
+          id="l-name"
+          type="text"
+          class="ax-input"
+          [(ngModel)]="name"
+          name="name"
+          placeholder="Seu nome"
+          autocomplete="name"
+          autofocus
+        />
+      </div>
+
+      <div class="ax-field">
+        <label class="ax-field__label" for="l-email">Email</label>
+        <input
+          id="l-email"
+          type="email"
+          class="ax-input"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="voce&#64;duka.tv"
+          autocomplete="email"
+        />
+      </div>
+
+      <label class="ax-check">
+        <input type="checkbox" [(ngModel)]="remember" name="remember" />
+        <span class="ax-check__box" aria-hidden="true">
+          <svg class="ax-check__tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"></path></svg>
+        </span>
+        <span class="ax-check__label">Manter conectado</span>
+      </label>
+
+      <button type="submit" class="ax-btn ax-btn--primary ax-btn--block" [disabled]="!canLogin">
+        <svg class="ax-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-4"></path>
+          <path d="M10 17l5 -5"></path>
+          <path d="M15 12l-5 -5"></path>
+          <path d="M4 12h11"></path>
+        </svg>
+        Entrar
+      </button>
+    </form>
+
+    <p class="ax-login__foot">Operação local — as credenciais ficam apenas neste navegador.</p>
+  </div>
+</div>
