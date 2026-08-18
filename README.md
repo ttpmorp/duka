@@ -1,5 +1,7 @@
-## Guia de Telas
+# Duka
+Trata-se de um sistema corporativo de gerenciamento de TVs do tipo quiosque.
 
+##
 ### 1. Login
 
 Tela inicial do sistema. A autenticação é local (navegador): informe nome e e-mail para entrar.
